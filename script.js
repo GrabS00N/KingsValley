@@ -575,97 +575,97 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
             {
                 if(board[3][2] == "brownKing" || board[4][2] == "brownKing") 
                 {
-                    score++;
+                    score+=20;
                 }
-                score++;
                 if(board[3][2] == "blueKing" || board[4][2] == "blueKing")
                 {
-                    score--;
+                    score-=20;
                 }
+                score++;
             }
             if(board[1][3] !== null)
             {
                 if(board[3][1] == "brownKing" || board[4][0] == "brownKing")
                 {
-                    score++;
+                    score+=20;
                 }
-                score++;
                 if(board[3][1] == "blueKing" || board[4][0] == "blueKing")
                 {
-                    score--;
+                    score-=20;
                 }
+                score++;
             }
             if(board[2][3] !== null)
             {
                 if(board[2][1] == "brownKing" || board[2][0] == "brownKing")
                 {
-                    score++;
+                    score+=20;
                 }
-                score++;
                 if(board[2][1] == "blueKing" || board[2][0] == "blueKing")
                 {
-                    score--;
+                    score-=20;
                 }
+                score++;
             }
             if(board[3][3] !== null)
             {
                 if(board[1][1] == "brownKing" || board[0][0] == "brownKing")
                 {
-                    score++;
+                    score+=20;
                 }
-                score++;
                 if(board[1][1] == "blueKing" || board[0][0] == "blueKing")
                 {
-                    score--;
+                    score-=20;
                 }
+                score++;
             }
             if(board[3][2] !== null)
             {
                 if(board[1][2] == "brownKing" || board[0][2] == "brownKing")
                 {
-                    score++;
+                    score+=20;
                 }
-                score++;
                 if(board[1][2] == "blueKing" || board[0][2] == "blueKing")
                 {
-                    score--;
+                    score-=20;
                 }
+                score++;
             }
             if(board[3][1] !== null)
             {
                 if(board[1][3] == "brownKing" || board[0][4] == "brownKing")
                 {
-                    score++;
+                    score+=20;
                 }
-                score++;
                 if(board[1][3] == "blueKing" || board[0][4] == "blueKing")
                 {
-                    score--;
+                    score-=20;
                 }
+                score++;
             }
             if(board[2][1] !== null)
             {
                 if(board[2][3] == "brownKing" || board[2][4] == "brownKing")
                 {
-                    score++;
+                    score+=20;
                 }
-                score++;
                 if(board[2][3] == "blueKing" || board[2][4] == "blueKing")
                 {
-                    score--;
+                    score-=20;
                 }
+                score++;
             }
             if(board[1][1] !== null)
             {
                 if(board[3][3] == "brownKing" || board[4][4] == "brownKing")
                 {
-                    score++;
+                    score+=20;
                 }
-                score++;
                 if(board[3][3] == "blueKing" || board[4][4] == "blueKing")
                 {
-                    score--;
+                    score-=20;
                 }
+                score++;
             }
             
             return score;
