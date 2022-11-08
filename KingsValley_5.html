@@ -357,9 +357,9 @@
                                     {
                                         
                                         if(previousField.x == 2 && previousField.y == 2 && dozens == 0 && units == 2)
-                                        {
-                                            
-                                            previousField.y-1;
+                                        {                                           
+                                            previousField.y = 1;
+                                            previousField.x = 2;
                                             possibleMoves.push({x: previousField.x, y: previousField.y, pawnX: l, pawnY: k, pawn: board[k][l]});
                                             break;
                                         }
@@ -392,8 +392,8 @@
                                 {
                                     if(previousField.x == 2 && previousField.y == 2 && dozens == 4 && units == 2)
                                     {
-                                        
-                                        previousField.y+1;
+                                        previousField.y = 3;
+                                        previousField.x = 2;
                                         possibleMoves.push({x: previousField.x, y: previousField.y, pawnX: l, pawnY: k, pawn: board[k][l]});
                                         break;
                                     }
@@ -425,8 +425,8 @@
                                 {
                                     if(previousField.x == 2 && previousField.y == 2 && dozens == 2 && units == 0)
                                     {
-                                        
-                                        previousField.x-1;
+                                        previousField.y = 2;
+                                        previousField.x = 1;
                                         possibleMoves.push({x: previousField.x, y: previousField.y, pawnX: l, pawnY: k, pawn: board[k][l]});
                                         break;
                                     }
@@ -458,8 +458,8 @@
                                 {
                                     if(previousField.x == 2 && previousField.y == 2 && dozens == 2 && units == 4)
                                     {
-                                        
-                                        previousField.x+1;
+                                        previousField.y = 2;
+                                        previousField.x = 3;
                                         possibleMoves.push({x: previousField.x, y: previousField.y, pawnX: l, pawnY: k, pawn: board[k][l]});
                                         break;
                                     }
@@ -496,9 +496,8 @@
                                 {
                                     if(previousField.x == 2 && previousField.y == 2 && dozens == 0 && units == 0)
                                     {
-                                        
-                                        previousField.x-1;
-                                        previousField.y-1;
+                                        previousField.y = 1;
+                                        previousField.x = 1;
                                         possibleMoves.push({x: previousField.x, y: previousField.y, pawnX: l, pawnY: k, pawn: board[k][l]});
                                         break;
                                     }
@@ -534,9 +533,8 @@
                                 {
                                     if(previousField.x == 2 && previousField.y == 2 && dozens == 0 && units == 4)
                                     {
-                                        
-                                        previousField.x+1;
-                                        previousField.y-1;
+                                        previousField.y = 1;
+                                        previousField.x = 3;
                                         possibleMoves.push({x: previousField.x, y: previousField.y, pawnX: l, pawnY: k, pawn: board[k][l]});
                                         break;
                                     }
@@ -572,9 +570,8 @@
                                 {
                                     if(previousField.x == 2 && previousField.y == 2 && dozens == 4 && units == 0)
                                     {
-                                        
-                                        previousField.x-1;
-                                        previousField.y+1;
+                                        previousField.y = 3;
+                                        previousField.x = 1;
                                         possibleMoves.push({x: previousField.x, y: previousField.y, pawnX: l, pawnY: k, pawn: board[k][l]});
                                         break;
                                     }
@@ -610,9 +607,8 @@
                                 {
                                     if(previousField.x == 2 && previousField.y == 2 && dozens == 4 && units == 4)
                                     {
-                                        
-                                        previousField.x+1;
-                                        previousField.y+1;
+                                        previousField.y = 3;
+                                        previousField.x = 3;
                                         possibleMoves.push({x: previousField.x, y: previousField.y, pawnX: l, pawnY: k, pawn: board[k][l]});
                                         break;
                                     }
@@ -756,7 +752,7 @@
 
         //Algorytm MINIMAX
         function bestMove(){
-            var score = minimax(board, 5, false, null, null);
+            var score = minimax(board, 3, false, null, null);
             console.log(score);
             
             moveTile(`${score[2].y+1}${score[2].x+1}`, `${score[2].pawnY+1}${score[2].pawnX+1}`, score[2].pawn, true);
@@ -785,7 +781,7 @@
                     var boardCopyCopy = JSON.parse(JSON.stringify(boardCopy));
                     boardCopyCopy[element.y][element.x] = element.pawn;
                     boardCopyCopy[element.pawnY][element.pawnX] = null;  
-                    testArray.push(minimax(boardCopyCopy, depth - 1, false, element, (depth == 5) ? element: beginingMove)); 
+                    testArray.push(minimax(boardCopyCopy, depth - 1, false, element, (depth == 3) ? element: beginingMove)); 
                 });
                 testArray.forEach(element => {
                     scoreArray.push(element[0]);
@@ -802,7 +798,7 @@
                     var boardCopyCopy = JSON.parse(JSON.stringify(boardCopy));
                     boardCopyCopy[element.y][element.x] = element.pawn;
                     boardCopyCopy[element.pawnY][element.pawnX] = null;  
-                    testArray.push(minimax(boardCopyCopy, depth - 1, true, element, (depth == 5) ? element: beginingMove)); 
+                    testArray.push(minimax(boardCopyCopy, depth - 1, true, element, (depth == 3) ? element: beginingMove)); 
                 });
                 testArray.forEach(element => {
                     scoreArray.push(element[0]);
@@ -1391,14 +1387,17 @@
         function win(){//Funkcja oglaszajaca zwyciezce i reset
             if(document.getElementById(33).value == "blueKing")
             {
-                setTimeout(function(){alert("Blue Won!!!");}, 10);
-                //siema
-                location.reload();
+                setTimeout(function(){
+                    alert("Blue Won!!!");
+                    location.reload();
+                }, 10);
             }
             else if(document.getElementById(33).value == "brownKing")
             {
-                setTimeout(function(){alert("Brown Won!!!");}, 10);
-                location.reload();
+                setTimeout(function(){
+                    alert("Brown Won!!!");
+                    location.reload();
+                }, 10);
             }
         }
 
