@@ -6,11 +6,15 @@
         <link rel="stylesheet" href="style.css">
     </head>
     <body bgcolor="DarkSlateGrey">
-        <button class="button" id="pvp" type="button" onclick="selectGameMode(pvp)">Gracz vs Gracz</button>
-        <button class="button" id="pve" type="button" onclick="selectGameMode(pve)">Gracz vs Bot</button>
-        <button class="button" id="eve" type="button" onclick="selectGameMode(eve)">Bot vs Bot</button>
+        <select id = "gamemodeOptions">
+            <option value = "pvp"> PvP</option>
+            <option value = "pve"> PvE</option>
+            <option value = "eve"> EvE</option>
+        </select>
+        <button class = "button" id = "Play" type = "button" onclick = "getListGamemode()"> Play </button>
         <button class="button" id="restart" type="button" onclick="location.reload()">Restart</button>
         <button class="button" id="undo" type="button" onclick="undoMove()">Cofnij ruch (wersja BETA)</button>
+        
         <center>
         <h2 id="turn">Wybierz tryb gry</h2>
         <table class="board">
