@@ -124,24 +124,25 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
             }
         }
 
-
-
         //Wybor trybu gry
-        var gameMode;
-        function selectGameMode(mode){
-            if(mode == pvp)
+        function getListGamemode(){
+            var x = document.getElementById("gamemodeOptions");
+            var mode = x.options[x.selectedIndex].value;
+            var gameMode;
+       
+            if(mode == "pvp")
             {
                 gameMode = 1;
                 alert("Wybrano tryb gracz vs gracz");
                 document.getElementById('turn').innerHTML = "Tura niebieskich";
             }
-            else if(mode == pve)
+            else if(mode == "pve")
             {
                 gameMode = 2;
                 alert("Wybrano tryb gracz vs bot");
                 document.getElementById('turn').innerHTML = "Tura niebieskich";
             }
-            else if(mode == eve)
+            else if(mode == "eve")
             {
                 gameMode = 3;
                 alert("Wybrano tryb bot vs bot");
