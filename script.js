@@ -126,26 +126,29 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
 
         //Wybor trybu gry
         function getListGamemode(){
-            var x = document.getElementById("gamemodeOptions");
-            var mode = x.options[x.selectedIndex].value;
+            var firstOption = document.getElementById("gameModeOptions");
+            var mode = firstOption.options[firstOption.selectedIndex].value;
             var gameMode;
+
+            var secondOption = document.getElementById("botModeOptions");
+            var botMode = secondOption.options[secondOption.selectedIndex].value;
        
             if(mode == "pvp")
             {
                 gameMode = 1;
-                alert("Wybrano tryb gracz vs gracz");
+                alert("Wybrano tryb gracz vs gracz ");
                 document.getElementById('turn').innerHTML = "Tura niebieskich";
             }
             else if(mode == "pve")
             {
                 gameMode = 2;
-                alert("Wybrano tryb gracz vs bot");
+                alert("Wybrano tryb gracz vs bot - "+botMode);
                 document.getElementById('turn').innerHTML = "Tura niebieskich";
             }
             else if(mode == "eve")
             {
                 gameMode = 3;
-                alert("Wybrano tryb bot vs bot");
+                alert("Wybrano tryb bot vs bot - "+botMode);
                 document.getElementById('turn').innerHTML = "Tura niebieskich";
             }
             
@@ -855,15 +858,26 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
                     }
                 }
             }
-        
             else if(turn == 2)
             {
-                setTimeout(function(){
+                if(botMode == "minimax")
+                {
+                    setTimeout(function(){
             
-                    bestMove();
-                    checkTurn();
-
-                }, 1000);  
+                        bestMove();
+                        checkTurn();
+    
+                    }, 1000); 
+                }
+                else if(botMode == "random")
+                {
+                    setTimeout(function(){
+            
+                        selectRandomBrown();
+                        checkTurn();
+    
+                    }, 1000); 
+                } 
             }
         }
     }
@@ -881,16 +895,27 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
 
                 }, 1000);
             }
-        
             else if(turn == 2)
             {
-                setTimeout(function(){
-
-                    getBoardState();
-                    bestMove();
-                    checkTurn2();
-
-                }, 1000);
+                if(botMode == "minimax")
+                {
+                    setTimeout(function(){
+                        
+                        getBoardState();
+                        bestMove();
+                        checkTurn2();
+    
+                    }, 1000); 
+                }
+                else if(botMode == "random")
+                {
+                    setTimeout(function(){
+            
+                        selectRandomBrown();
+                        checkTurn2();
+    
+                    }, 1000); 
+                } 
             }
         }
     }
