@@ -567,109 +567,109 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
             var score = 0;
             if(board[2][2] == "brownKing") 
             {
-                score+=1000; 
+                score-=1000; 
                 return score;
             }
             if(board[2][2] == "blueKing") 
             {
-                score-=1000;
+                score+=1000;
                 return score;
             }
             if(board[1][2] !== null)
             {
                 if(board[3][2] == "brownKing" || board[4][2] == "brownKing") 
                 {
-                    score+=20;
+                    score-=20;
                 }
                 if(board[3][2] == "blueKing" || board[4][2] == "blueKing")
                 {
-                    score-=20;
+                    score+=20;
                 }
-                score++;
+                score--;
             }
             if(board[1][3] !== null)
             {
                 if(board[3][1] == "brownKing" || board[4][0] == "brownKing")
                 {
-                    score+=20;
+                    score-=20;
                 }
                 if(board[3][1] == "blueKing" || board[4][0] == "blueKing")
                 {
-                    score-=20;
+                    score+=20;
                 }
-                score++;
+                score--;
             }
             if(board[2][3] !== null)
             {
                 if(board[2][1] == "brownKing" || board[2][0] == "brownKing")
                 {
-                    score+=20;
+                    score-=20;
                 }
                 if(board[2][1] == "blueKing" || board[2][0] == "blueKing")
                 {
-                    score-=20;
+                    score+=20;
                 }
-                score++;
+                score--;
             }
             if(board[3][3] !== null)
             {
                 if(board[1][1] == "brownKing" || board[0][0] == "brownKing")
                 {
-                    score+=20;
+                    score-=20;
                 }
                 if(board[1][1] == "blueKing" || board[0][0] == "blueKing")
                 {
-                    score-=20;
+                    score+=20;
                 }
-                score++;
+                score--;
             }
             if(board[3][2] !== null)
             {
                 if(board[1][2] == "brownKing" || board[0][2] == "brownKing")
                 {
-                    score+=20;
+                    score-=20;
                 }
                 if(board[1][2] == "blueKing" || board[0][2] == "blueKing")
                 {
-                    score-=20;
+                    score+=20;
                 }
-                score++;
+                score--;
             }
             if(board[3][1] !== null)
             {
                 if(board[1][3] == "brownKing" || board[0][4] == "brownKing")
                 {
-                    score+=20;
+                    score-=20;
                 }
                 if(board[1][3] == "blueKing" || board[0][4] == "blueKing")
                 {
-                    score-=20;
+                    score+=20;
                 }
-                score++;
+                score--;
             }
             if(board[2][1] !== null)
             {
                 if(board[2][3] == "brownKing" || board[2][4] == "brownKing")
                 {
-                    score+=20;
+                    score-=20;
                 }
                 if(board[2][3] == "blueKing" || board[2][4] == "blueKing")
                 {
-                    score-=20;
+                    score+=20;
                 }
-                score++;
+                score--;
             }
             if(board[1][1] !== null)
             {
                 if(board[3][3] == "brownKing" || board[4][4] == "brownKing")
                 {
-                    score+=20;
+                    score-=20;
                 }
                 if(board[3][3] == "blueKing" || board[4][4] == "blueKing")
                 {
-                    score-=20;
+                    score+=20;
                 }
-                score++;
+                score--;
             }
             
             return score;
@@ -688,7 +688,7 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
         
         function minimax(board, depth, isMaximizing, currentMove, beginingMove){
             var boardCopy = JSON.parse(JSON.stringify(board));
-            if(evaluate(boardCopy) == 1000)
+            if(evaluate(boardCopy) == -1000)
             {
                 return [evaluate(boardCopy), currentMove, beginingMove, depth];
             }
@@ -713,7 +713,7 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
                     scoreArray.push(element[0]);
                 });         
                 console.log(testArray[0][0]);
-                return testArray[scoreArray.indexOf(Math.min(...scoreArray))];
+                return testArray[scoreArray.indexOf(Math.max(...scoreArray))];
             }
             else
             {
@@ -729,7 +729,7 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
                 testArray.forEach(element => {
                     scoreArray.push(element[0]);
                 });         
-                return testArray[scoreArray.indexOf(Math.max(...scoreArray))];
+                return testArray[scoreArray.indexOf(Math.min(...scoreArray))];
             }   
         }
 
