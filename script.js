@@ -712,7 +712,6 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
                 testArray.forEach(element => {
                     scoreArray.push(element[0]);
                 });         
-                console.log(testArray[0][0]);
                 return testArray[scoreArray.indexOf(Math.max(...scoreArray))];
             }
             else
@@ -728,13 +727,139 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
                 });
                 testArray.forEach(element => {
                     scoreArray.push(element[0]);
-                });         
+                });     
+                console.log(testArray[0][0]);    
                 return testArray[scoreArray.indexOf(Math.min(...scoreArray))];
             }   
         }
 
 
-    
+        
+        function evaluateNegamax(board){
+            var score = 0;
+            if(board[2][2] == "brownKing" || board[2][2] == "blueKing") 
+            {
+                score-=1000; 
+                return score;
+            }
+            if(board[1][2] !== null)
+            {
+                if(board[3][2] == "brownKing" || board[4][2] == "brownKing" || board[3][2] == "blueKing" || board[4][2] == "blueKing") 
+                {
+                    score-=20;
+                }
+                score--;
+            }
+            if(board[1][3] !== null)
+            {
+                if(board[3][1] == "brownKing" || board[4][0] == "brownKing" || board[3][1] == "blueKing" || board[4][0] == "blueKing")
+                {
+                    score-=20;
+                }
+                score--;
+            }
+            if(board[2][3] !== null)
+            {
+                if(board[2][1] == "brownKing" || board[2][0] == "brownKing" || board[2][1] == "blueKing" || board[2][0] == "blueKing")
+                {
+                    score-=20;
+                }
+                score--;
+            }
+            if(board[3][3] !== null)
+            {
+                if(board[1][1] == "brownKing" || board[0][0] == "brownKing" || board[1][1] == "blueKing" || board[0][0] == "blueKing")
+                {
+                    score-=20;
+                }
+                score--;
+            }
+            if(board[3][2] !== null)
+            {
+                if(board[1][2] == "brownKing" || board[0][2] == "brownKing" || board[1][2] == "blueKing" || board[0][2] == "blueKing")
+                {
+                    score-=20;
+                }
+                score--;
+            }
+            if(board[3][1] !== null)
+            {
+                if(board[1][3] == "brownKing" || board[0][4] == "brownKing" || board[1][3] == "blueKing" || board[0][4] == "blueKing")
+                {
+                    score-=20;
+                }
+                score--;
+            }
+            if(board[2][1] !== null)
+            {
+                if(board[2][3] == "brownKing" || board[2][4] == "brownKing" || board[2][3] == "blueKing" || board[2][4] == "blueKing")
+                {
+                    score-=20;
+                }
+                score--;
+            }
+            if(board[1][1] !== null)
+            {
+                if(board[3][3] == "brownKing" || board[4][4] == "brownKing" || board[3][3] == "blueKing" || board[4][4] == "blueKing")
+                {
+                    score-=20;
+                }
+                score--;
+            }
+            
+            return score;
+        }
+
+
+        //Algorytm NEGAMAX
+        function bestMoveNegamax(){
+            var score = negamax(board, 3, -1, null, null);
+            console.log(score);
+
+            moveTile(`${score[2].y+1}${score[2].x+1}`, `${score[2].pawnY+1}${score[2].pawnX+1}`, score[2].pawn, true);
+            
+        }
+
+        var pawnColorNegamax;
+        function negamax(board, depth, sign, currentMove, beginingMove){
+            var boardCopy = JSON.parse(JSON.stringify(board));
+            if(evaluateNegamax(boardCopy) == -1000)
+            {
+                return [sign*evaluateNegamax(boardCopy), currentMove, beginingMove, depth];
+            }
+            else if(depth == 0)
+            {
+                return [sign*evaluateNegamax(boardCopy), currentMove, beginingMove];
+            }
+            
+                
+            
+                var testArray = new Array();
+                var scoreArray = new Array();
+                if(sign == 1)
+                {
+                    pawnColorNegamax = "blue";                   
+                }
+                else if (sign == -1)
+                {
+                    pawnColorNegamax = "brown"; 
+                }
+                var possibleMoves = getPossibleMoves(boardCopy, pawnColorNegamax);
+                possibleMoves.forEach(element => {
+                    var boardCopyCopy = JSON.parse(JSON.stringify(boardCopy));
+                    boardCopyCopy[element.y][element.x] = element.pawn;
+                    boardCopyCopy[element.pawnY][element.pawnX] = null;  
+                    testArray.push(negamax(boardCopyCopy, depth - 1, -sign, element, (depth == 3) ? element: beginingMove)); 
+                });
+                testArray.forEach(element => {
+                    scoreArray.push(element[0]);
+                }); 
+                console.log(testArray[0][0]);        
+                return testArray[scoreArray.indexOf(Math.min(...scoreArray))];
+        }
+
+
+
 
 
 
@@ -878,6 +1003,15 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
     
                     }, 1000); 
                 } 
+                else if(botMode == "negamax")
+                {
+                    setTimeout(function(){
+            
+                        bestMoveNegamax();
+                        checkTurn();
+    
+                    }, 1000);
+                }
             }
         }
     }
