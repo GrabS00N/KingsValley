@@ -833,14 +833,14 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
             }
             
                 
-            
+                
                 var testArray = new Array();
                 var scoreArray = new Array();
                 if(sign == 1)
                 {
                     pawnColorNegamax = "blue";                   
                 }
-                else if (sign == -1)
+                else
                 {
                     pawnColorNegamax = "brown"; 
                 }
@@ -858,8 +858,7 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
                 return testArray[scoreArray.indexOf(Math.min(...scoreArray))];
         }
 
-
-
+        
 
 
 
