@@ -813,7 +813,7 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
 
         //Algorytm NEGAMAX
         function bestMoveNegamax(){
-            var score = negamax(board, 3, -1, null, null);
+            var score = negamax(board, 3, sign = -1, null, null);
             console.log(score);
 
             moveTile(`${score[2].y+1}${score[2].x+1}`, `${score[2].pawnY+1}${score[2].pawnX+1}`, score[2].pawn, true);
@@ -824,8 +824,8 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
         function negamax(board, depth, sign, currentMove, beginingMove){
             var boardCopy = JSON.parse(JSON.stringify(board));
             if(evaluateNegamax(boardCopy) == -1000)
-            {
-                return [sign*evaluateNegamax(boardCopy), currentMove, beginingMove, depth];
+            {    
+                return [sign*evaluateNegamax(boardCopy), currentMove, beginingMove, depth];      
             }
             else if(depth == 0)
             {
