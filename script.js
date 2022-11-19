@@ -679,7 +679,7 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
         //Algorytm MINIMAX
         function bestMove(){
             var score = minimax(board, 3, false, null, null);
-            console.log(score);
+            
             
             moveTile(`${score[2].y+1}${score[2].x+1}`, `${score[2].pawnY+1}${score[2].pawnX+1}`, score[2].pawn, true);
             
@@ -728,7 +728,7 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
                 testArray.forEach(element => {
                     scoreArray.push(element[0]);
                 });     
-                console.log(testArray[0][0]);    
+                  
                 return testArray[scoreArray.indexOf(Math.min(...scoreArray))];
             }   
         }
@@ -813,14 +813,15 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
 
         //Algorytm NEGAMAX
         function bestMoveNegamax(){
-            var score = negamax(board, 3, sign = -1, null, null);
-            console.log(score);
+            var score = negamax(board, 4, sign = 1, null, null);
+            
 
             moveTile(`${score[2].y+1}${score[2].x+1}`, `${score[2].pawnY+1}${score[2].pawnX+1}`, score[2].pawn, true);
             
         }
 
         var pawnColorNegamax;
+
         function negamax(board, depth, sign, currentMove, beginingMove){
             var boardCopy = JSON.parse(JSON.stringify(board));
             if(evaluateNegamax(boardCopy) == -1000)
@@ -834,28 +835,32 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
             
                 
                 
-                var testArray = new Array();
-                var scoreArray = new Array();
-                if(sign == 1)
-                {
-                    pawnColorNegamax = "blue";                   
-                }
-                else
-                {
-                    pawnColorNegamax = "brown"; 
-                }
-                var possibleMoves = getPossibleMoves(boardCopy, pawnColorNegamax);
-                possibleMoves.forEach(element => {
-                    var boardCopyCopy = JSON.parse(JSON.stringify(boardCopy));
-                    boardCopyCopy[element.y][element.x] = element.pawn;
-                    boardCopyCopy[element.pawnY][element.pawnX] = null;  
-                    testArray.push(negamax(boardCopyCopy, depth - 1, -sign, element, (depth == 3) ? element: beginingMove)); 
-                });
-                testArray.forEach(element => {
-                    scoreArray.push(element[0]);
-                }); 
-                console.log(testArray[0][0]);        
-                return testArray[scoreArray.indexOf(Math.min(...scoreArray))];
+                
+            if(sign === 1)
+            {
+                pawnColorNegamax = "brown";                   
+            }
+            else
+            {
+                pawnColorNegamax = "blue"; 
+            }
+
+            var testArray = new Array();
+            var scoreArray = new Array();
+            var possibleMoves = getPossibleMoves(boardCopy, pawnColorNegamax);
+            
+            possibleMoves.forEach(element => {
+                var boardCopyCopy = JSON.parse(JSON.stringify(boardCopy));
+                boardCopyCopy[element.y][element.x] = element.pawn;
+                boardCopyCopy[element.pawnY][element.pawnX] = null;  
+                var value = negamax(boardCopyCopy, depth - 1, -sign, element, (depth == 4) ? element: beginingMove)
+                testArray.push([-value[0], value[1], value[2]]); 
+            });
+            testArray.forEach(element => {
+                scoreArray.push(element[0]);
+            });    
+                
+            return testArray[scoreArray.indexOf(Math.min(...scoreArray))];
         }
 
         
@@ -1048,6 +1053,16 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
                         checkTurn2();
     
                     }, 1000); 
+                }
+                else if(botMode == "negamax")
+                {
+                    setTimeout(function(){
+            
+                        getBoardState();
+                        bestMoveNegamax();
+                        checkTurn2();
+    
+                    }, 1000);
                 } 
             }
         }
