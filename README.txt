@@ -68,3 +68,15 @@ Zasady:
 Wcielamy się w rozwścieczoną watahę, która od tygodni nie zdobyła strawy.
 Każdy wilk jest zwinnym łowcą, dzięki czemu może poruszać się w dowolnym kierunku, aczkolwiek głód i pierwotny instynkt zaślepiają ich umysły, przez co bezmyślnie szarżują poruszając się o maksymalną liczbę pól w wybraną stronę.
 Wilki nie mogą omijać innych wilków napotkanych na swojej drodze, przez co zatrzymują się przed nimi.
+
+
+
+
+
+Wyniki symulacji:
+
+MINIMAX vs random
+100 - 0
+
+NEGAMAX vs random
+100 - 0
