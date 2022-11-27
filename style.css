@@ -1,4 +1,4 @@
-.board {border-spacing: 0; border-collapse: collapse; margin-top:300px;}
+.board {border-spacing: 0; border-collapse: collapse; margin-top:300px; margin-right: 600px;}
 .board th {padding: .80px; }
 .board td {border: 3px solid; width: 74px; height: 74px; }
 

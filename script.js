@@ -865,6 +865,62 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
 
         
 
+        //Algorytm Alpha-Beta pruning negamax
+        function bestMoveAbnegamax(){
+            var score = abnegamax(board, 4, sign = 1, alpha = -1000, beta = 1000, null, null);
+            
+
+            moveTile(`${score[2].y+1}${score[2].x+1}`, `${score[2].pawnY+1}${score[2].pawnX+1}`, score[2].pawn, true);
+            
+        }
+
+        var pawnColorAbnegamax;
+
+        function abnegamax(board, depth, sign, alpha, beta, currentMove, beginingMove){
+            var boardCopy = JSON.parse(JSON.stringify(board));
+            if(evaluateNegamax(boardCopy) == -1000)
+            {    
+                return [sign*evaluateNegamax(boardCopy), currentMove, beginingMove, depth];      
+            }
+            else if(depth == 0)
+            {
+                return [sign*evaluateNegamax(boardCopy), currentMove, beginingMove];
+            }
+            
+                
+                
+                
+            if(sign === 1)
+            {
+                pawnColorAbnegamax = "brown";                   
+            }
+            else
+            {
+                pawnColorAbnegamax = "blue"; 
+            }
+
+            var testArray = new Array();
+            var scoreArray = new Array();
+            var possibleMoves = getPossibleMoves(boardCopy, pawnColorAbnegamax);
+            
+            possibleMoves.forEach(element => {
+                var boardCopyCopy = JSON.parse(JSON.stringify(boardCopy));
+                boardCopyCopy[element.y][element.x] = element.pawn;
+                boardCopyCopy[element.pawnY][element.pawnX] = null;  
+                var value = abnegamax(boardCopyCopy, depth - 1, -sign, -alpha, -beta, element, (depth == 4) ? element: beginingMove)
+                testArray.push([-value[0], value[1], value[2]]); 
+            });
+            testArray.forEach(element => {
+                scoreArray.push(element[0]);
+            });    
+                
+            return testArray[scoreArray.indexOf(Math.min(...scoreArray))];
+        }
+
+
+
+
+
 
 
     if(gameMode == 1)//Sterowanie dla 'gracz vs gracz'
@@ -1016,6 +1072,15 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
     
                     }, 1000);
                 }
+                else if(botMode == "abnegamax")
+                {
+                    setTimeout(function(){
+            
+                        bestMoveAbnegamax();
+                        checkTurn();
+    
+                    }, 1000);
+                }
             }
         }
     }
@@ -1060,6 +1125,16 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
             
                         getBoardState();
                         bestMoveNegamax();
+                        checkTurn2();
+    
+                    }, 1000);
+                }
+                else if(botMode == "abnegamax")
+                {
+                    setTimeout(function(){
+            
+                        getBoardState();
+                        bestMoveAbnegamax();
                         checkTurn2();
     
                     }, 1000);
