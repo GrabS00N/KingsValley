@@ -80,3 +80,6 @@ MINIMAX vs random
 
 NEGAMAX vs random
 100 - 0
+
+AlphaBetaNegamax vs random
+100 - 0
