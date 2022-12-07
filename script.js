@@ -562,6 +562,61 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
             return possibleMoves;
         }
         
+        //D3 tree diagram
+        function drawGraph(data) {
+            // set the dimensions and margins of the graph
+            const height = 720
+        
+            document.querySelector('#my_dataviz').innerHTML = ''
+        
+            // append the svg object to the body of the page
+            const svg = d3.select("#my_dataviz")
+                .append("svg")
+                .attr("width", '100%')
+                .attr("height", height)
+                .append("g")
+                .attr("transform", "translate(40,60)");  // bit of margin on the left = 40
+            
+            // Create the cluster layout:
+            const cluster = d3.cluster()
+                .size([height, 500]);  // 100 is the margin I will have on the right side
+        
+            // Give the data to this cluster layout:
+            const root = d3.hierarchy(data, function (d) {
+                return d.children;
+            });
+            cluster(root);
+        
+            // Add the links between nodes:
+            svg.selectAll('path')
+                .data(root.descendants().slice(1))
+                .join('path')
+                .attr("d", function (d) {
+                    return "M" + d.x + "," + d.y
+                + "C" + (d.x) + "," + (d.parent.y+50)
+                + " " + (d.parent.x) + "," + (d.parent.y+150) // 50 and 150 are coordinates of inflexion, play with it to change links shape
+                + " " + d.parent.x + "," + d.parent.y;
+              })
+                .style("fill", 'none')
+                .attr("stroke", '#ccc')
+        
+            // Add a text for each node.
+            let node = svg.selectAll("g")
+                .data(root.descendants())
+                .join("g")
+                .attr("transform", function (d) {
+                    return `translate(${d.x - 15},${d.y})`
+                })
+
+            node.append("text")
+                .attr("dx", 0)
+                .attr("dy", 0)
+                .style("text-center", true)
+                .text( function(d){ return d.data.name})
+        }
+
+
+
 
         function evaluate(board){
             var score = 0;
@@ -680,6 +735,7 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
         function bestMove(){
             var score = minimax(board, 3, false, null, null);
             
+            drawGraph(score[3]);
             
             moveTile(`${score[2].y+1}${score[2].x+1}`, `${score[2].pawnY+1}${score[2].pawnX+1}`, score[2].pawn, true);
             
@@ -687,14 +743,15 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
 
         
         function minimax(board, depth, isMaximizing, currentMove, beginingMove){
+            let children = [];
             var boardCopy = JSON.parse(JSON.stringify(board));
             if(evaluate(boardCopy) == -1000)
             {
-                return [evaluate(boardCopy), currentMove, beginingMove, depth];
+                return [evaluate(boardCopy), currentMove, beginingMove, { name: evaluate(boardCopy) }];
             }
             else if(depth == 0)
             {
-                return [evaluate(boardCopy), currentMove, beginingMove];
+                return [evaluate(boardCopy), currentMove, beginingMove, { name: evaluate(boardCopy) }];
             }
             
 
@@ -710,9 +767,12 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
                     testArray.push(minimax(boardCopyCopy, depth - 1, false, element, (depth == 3) ? element: beginingMove)); 
                 });
                 testArray.forEach(element => {
-                    scoreArray.push(element[0]);
-                });         
-                return testArray[scoreArray.indexOf(Math.max(...scoreArray))];
+                    scoreArray.push(element[0])
+                    children.push(element[3])
+                });
+                let index = scoreArray.indexOf(Math.max(...scoreArray))
+                testArray[index][3] = {name: testArray[index][0], children: children}
+                return testArray[index];
             }
             else
             {
@@ -726,10 +786,12 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
                     testArray.push(minimax(boardCopyCopy, depth - 1, true, element, (depth == 3) ? element: beginingMove)); 
                 });
                 testArray.forEach(element => {
-                    scoreArray.push(element[0]);
-                });     
-                  
-                return testArray[scoreArray.indexOf(Math.min(...scoreArray))];
+                    scoreArray.push(element[0])
+                    children.push(element[3])
+                });
+                let index = scoreArray.indexOf(Math.min(...scoreArray))
+                testArray[index][3] = {name: testArray[index][0], children: children}
+                return testArray[index];
             }   
         }
 
@@ -738,22 +800,23 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
         function bestMoveNegamax(){
             var score = negamax(board, 4, sign = 1, null, null);
             
+            drawGraph(score[3]);
 
-            moveTile(`${score[2].y+1}${score[2].x+1}`, `${score[2].pawnY+1}${score[2].pawnX+1}`, score[2].pawn, true);
-            
+            moveTile(`${score[2].y+1}${score[2].x+1}`, `${score[2].pawnY+1}${score[2].pawnX+1}`, score[2].pawn, true);  
         }
 
         var pawnColorNegamax;
 
         function negamax(board, depth, sign, currentMove, beginingMove){
+            let children = [];
             var boardCopy = JSON.parse(JSON.stringify(board));
             if(evaluate(boardCopy) == -1000)
             {    
-                return [sign*evaluate(boardCopy), currentMove, beginingMove, depth];      
+                return [sign*evaluate(boardCopy), currentMove, beginingMove, { name: sign*evaluate(boardCopy) }];      
             }
             else if(depth == 0)
             {
-                return [sign*evaluate(boardCopy), currentMove, beginingMove];
+                return [sign*evaluate(boardCopy), currentMove, beginingMove, { name: sign*evaluate(boardCopy) }];
             }
             
                 
@@ -777,13 +840,18 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
                 boardCopyCopy[element.y][element.x] = element.pawn;
                 boardCopyCopy[element.pawnY][element.pawnX] = null;  
                 var value = negamax(boardCopyCopy, depth - 1, -sign, element, (depth == 4) ? element: beginingMove)
-                testArray.push([-value[0], value[1], value[2]]); 
+                testArray.push([-value[0], value[1], value[2]]);
+                children.push(value[3]);
             });
             testArray.forEach(element => {
                 scoreArray.push(element[0]);
             });    
                 
-            return testArray[scoreArray.indexOf(Math.min(...scoreArray))];
+            
+            let index = scoreArray.indexOf(Math.min(...scoreArray))
+            testArray[index][3] = {name: depth === 4 ? testArray[index][0] : -testArray[index][0], children: children}
+
+            return testArray[index];
         }
 
 
@@ -791,7 +859,8 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
         function bestMoveAbnegamax(){
             var score = abnegamax(board, 4, sign = 1, alpha = 1000, beta = -1000, null, null);
             
-            
+            drawGraph(score[3]);
+
             moveTile(`${score[2].y+1}${score[2].x+1}`, `${score[2].pawnY+1}${score[2].pawnX+1}`, score[2].pawn, true);
             
         }
@@ -799,14 +868,15 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
         var pawnColorAbnegamax;
 
         function abnegamax(board, depth, sign, alpha, beta, currentMove, beginingMove){
+            let children = [];
             var boardCopy = JSON.parse(JSON.stringify(board));
             if(evaluate(boardCopy) == -1000)
             {    
-                return [sign*evaluate(boardCopy), currentMove, beginingMove, depth];      
+                return [sign*evaluate(boardCopy), currentMove, beginingMove, { name: sign*evaluate(boardCopy) }];      
             }
             else if(depth == 0)
             {
-                return [sign*evaluate(boardCopy), currentMove, beginingMove];
+                return [sign*evaluate(boardCopy), currentMove, beginingMove, { name: sign*evaluate(boardCopy) }];
             }
             
             
@@ -833,6 +903,7 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
                 boardCopyCopy[possibleMoves[i].pawnY][possibleMoves[i].pawnX] = null;  
                 var value = abnegamax(boardCopyCopy, depth - 1, -sign, -beta, -alpha, possibleMoves[i], (depth == 4) ? possibleMoves[i]: beginingMove);
                 value[0] *= -1;
+                children.push(value[3]);
                 score = (Math.min(score[0], value[0]) == value[0]) ? value : score;
                 
                 alpha = Math.min(alpha, score[0]);
@@ -844,7 +915,10 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
                 }
             }   
                
-            return score;
+            
+            score[3] = {name: depth === 4 ? score[0] : -score[0], children: children}
+
+            return score
         }
 
 
