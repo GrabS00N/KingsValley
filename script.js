@@ -575,7 +575,7 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
                 .attr("width", '100%')
                 .attr("height", height)
                 .append("g")
-                .attr("transform", "translate(40,60)");  // bit of margin on the left = 40
+                .attr("transform", "translate(40,20)");  // bit of margin on the left = 40
             
             // Create the cluster layout:
             const cluster = d3.cluster()
