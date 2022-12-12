@@ -924,12 +924,53 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
 
 
         //Algorytm Monte-Carlo Search
-        function MonteCarloSearch(board, NumberOfSimulations){
-            let bestMove = null;
-            let bestProbability = -1;
+        function bestMoveMonteCarloSearch(){
+            monteCarloSearch(board, NumberOfSimulations);
             
+        }
+
+        function monteCarloSearch(board, NumberOfSimulations){
+            // let bestMove = null;
+            // let bestProbability = -1;
+            // let bestMove2 = bestMove;
+            // let r = 0;
+            // bestMove2 = selectRandomBrown();
             
-            let randomMove = selectRandomBrown();
+
+
+            // testArray.forEach(element => {
+            //     scoreArray.push(element);
+            // }); 
+            var boardCopy = JSON.parse(JSON.stringify(board)); 
+                
+            if(sign === 1)
+            {
+                pawnColorNegamax = "brown";                   
+            }
+            else
+            {
+                pawnColorNegamax = "blue"; 
+            }
+
+            var testArray = new Array();
+            var scoreArray = new Array();
+            var possibleMoves = getPossibleMoves(boardCopy, pawnColorNegamax);
+            
+            possibleMoves.forEach(element => {
+                var boardCopyCopy = JSON.parse(JSON.stringify(boardCopy));
+                boardCopyCopy[element.y][element.x] = element.pawn;
+                boardCopyCopy[element.pawnY][element.pawnX] = null;  
+                var value = negamax(boardCopyCopy, depth - 1, -sign, element, (depth == 4) ? element: beginingMove)
+                testArray.push([-value[0], value[1], value[2]]);
+            });
+            testArray.forEach(element => {
+                scoreArray.push(element[0]);
+            });    
+                
+            
+            let index = scoreArray.indexOf(Math.min(...scoreArray))
+            
+            return testArray[index];
         }
         
 
@@ -1089,6 +1130,15 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
                     setTimeout(function(){
             
                         bestMoveAbnegamax();
+                        checkTurn();
+    
+                    }, 1000);
+                }
+                else if(botMode == "montecarlosearch")
+                {
+                    setTimeout(function(){
+            
+                        bestMoveMonteCarloSearch();
                         checkTurn();
     
                     }, 1000);
