@@ -925,55 +925,57 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
 
         //Algorytm Monte-Carlo Search
         function bestMoveMonteCarloSearch(){
-            monteCarloSearch(board, NumberOfSimulations);
-            
+            let moveMCS = monteCarloSearch(board, 200);
+            drawGraph(moveMCS[2]);
+            moveTile(`${moveMCS[1].y+1}${moveMCS[1].x+1}`, `${moveMCS[1].pawnY+1}${moveMCS[1].pawnX+1}`, moveMCS[1].pawn, true);
         }
 
-        function monteCarloSearch(board, NumberOfSimulations){
-            // let bestMove = null;
-            // let bestProbability = -1;
-            // let bestMove2 = bestMove;
-            // let r = 0;
-            // bestMove2 = selectRandomBrown();
-            
-
-
-            // testArray.forEach(element => {
-            //     scoreArray.push(element);
-            // }); 
-            var boardCopy = JSON.parse(JSON.stringify(board)); 
-                
-            if(sign === 1)
-            {
-                pawnColorNegamax = "brown";                   
-            }
-            else
-            {
-                pawnColorNegamax = "blue"; 
-            }
-
-            var testArray = new Array();
-            var scoreArray = new Array();
-            var possibleMoves = getPossibleMoves(boardCopy, pawnColorNegamax);
+        function monteCarloSearch(board, numberOfSimulations){
+            let children = [];
+            let bestGraph = null;
+            let bestMove = null;
+            let bestProbability = -1; 
+            let pawnColorMCS = "brown";
+            let boardCopy = JSON.parse(JSON.stringify(board)); 
+            let possibleMoves = getPossibleMoves(boardCopy, pawnColorMCS);
             
             possibleMoves.forEach(element => {
-                var boardCopyCopy = JSON.parse(JSON.stringify(boardCopy));
+                let boardCopyCopy = JSON.parse(JSON.stringify(boardCopy));
                 boardCopyCopy[element.y][element.x] = element.pawn;
-                boardCopyCopy[element.pawnY][element.pawnX] = null;  
-                var value = negamax(boardCopyCopy, depth - 1, -sign, element, (depth == 4) ? element: beginingMove)
-                testArray.push([-value[0], value[1], value[2]]);
+                boardCopyCopy[element.pawnY][element.pawnX] = null;
+                let r = 0;
+                for(let i = 0; i < numberOfSimulations; ++i)
+                {
+                    let childBoard = JSON.parse(JSON.stringify(boardCopyCopy));
+                    pawnColorMCS = "blue";
+                    while(!(childBoard[2][2] == "brownKing" || childBoard[2][2] == "blueKing")){
+                        let currentPossibleMoves = getPossibleMoves(childBoard, pawnColorMCS);
+                        if(currentPossibleMoves.length == 0)
+                        {
+                            break;
+                        }
+                        let randomNumber = Math.floor(Math.random() * ((currentPossibleMoves.length-1) - 0 + 1) + 0);
+                        let currentMove = currentPossibleMoves[randomNumber];
+                        childBoard[currentMove.y][currentMove.x] = currentMove.pawn;
+                        childBoard[currentMove.pawnY][currentMove.pawnX] = null;
+                        pawnColorMCS = (pawnColorMCS === "blue") ? "brown" : "blue";
+                    }
+                    if(childBoard[2][2] == "brownKing")
+                    {
+                        ++r;
+                    }
+                }
+                let probability = r / numberOfSimulations;
+                if(probability > bestProbability)
+                {
+                    bestProbability = probability;
+                    bestMove = element;
+                    bestGraph = { name: `${Math.floor(bestProbability*100)}%`};
+                }
+                children.push({ name: `${Math.floor(bestProbability*100)}%`});
             });
-            testArray.forEach(element => {
-                scoreArray.push(element[0]);
-            });    
-                
-            
-            let index = scoreArray.indexOf(Math.min(...scoreArray))
-            
-            return testArray[index];
+            return [bestProbability, bestMove, {name: bestGraph.name, children: children}];
         }
-        
-
 
 
     if(gameMode == 1)//Sterowanie dla 'gracz vs gracz'
@@ -1158,7 +1160,7 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
                     selectRandomBlue();
                     checkTurn2();
 
-                }, 1000);
+                }, 10);
             }
             else if(turn == 2)
             {
@@ -1200,7 +1202,17 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
                         checkTurn2();
     
                     }, 1000);
-                } 
+                }
+                else if(botMode == "montecarlosearch")
+                {
+                    setTimeout(function(){
+            
+                        getBoardState();
+                        bestMoveMonteCarloSearch();
+                        checkTurn2();
+    
+                    }, 10);
+                }  
             }
         }
     }
