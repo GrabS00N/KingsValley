@@ -923,7 +923,15 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
 
 
 
-
+        //Algorytm Monte-Carlo Search
+        function MonteCarloSearch(board, NumberOfSimulations){
+            let bestMove = null;
+            let bestProbability = -1;
+            
+            
+            let randomMove = selectRandomBrown();
+        }
+        
 
 
 
