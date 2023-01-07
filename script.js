@@ -978,6 +978,136 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
         }
 
 
+        //Algorytm Monte-Carlo Tree-Search
+        function bestMoveMonteCarloTreeSearch(){
+            let moveMCTS = monteCarloTreeSearch(board);
+            
+            moveTile(`${moveMCTS[1].y+1}${moveMCTS[1].x+1}`, `${moveMCTS[1].pawnY+1}${moveMCTS[1].pawnX+1}`, moveMCTS[1].pawn, true);
+        }
+
+        function monteCarloTreeSearch(board){
+            let pawnColorMCTS = "brown";
+            let possibleMoves = getPossibleMoves(board, pawnColorMCTS);
+            let seconds = 6;
+
+            let root = {
+                board: board,
+                parent: null,
+                children: [],
+                possibleMoves: possibleMoves,
+                move: null,
+                currentPlayer: pawnColorMCTS,
+                visits: 0, 
+                wins: 0 
+            }
+
+            let startTime = Date.now();
+            
+            while((Date.now() - startTime) < (seconds*1000)){
+                let current = treePolicy(root);
+                let reward = defaultPolicy(current);
+                backup(current, reward);
+            }
+
+            let maxVisits = -Infinity;
+            let bestChild = null;
+            root.children.forEach(child =>{
+                if(child.visits > maxVisits){
+                    maxVisits = child.visits;
+                    bestChild = child;
+                }
+            })
+            let winingProbability = `${bestChild.wins}/${bestChild.visits}`;
+            return [winingProbability, bestChild.move];
+        }
+
+        function treePolicy(node){
+            while(!(node.board[2][2] == "brownKing" || node.board[2][2] == "blueKing")){
+                if(node.possibleMoves.length !=0)
+                {
+                    return expand(node);
+                }
+                else
+                {
+                    node = bestChild(node);
+                }
+            }
+            
+            if(node.board[2][2] == "blueKing"){
+                node.wins = Number.MIN_SAFE_INTEGER;
+            }
+            return node;
+        }
+
+        function expand(node){
+            let randomNumber = Math.floor(Math.random() * ((node.possibleMoves.length-1) - 0 + 1) + 0);
+            let boardCopy = JSON.parse(JSON.stringify(node.board));
+            let currentMove = node.possibleMoves[randomNumber];
+
+            boardCopy[currentMove.y][currentMove.x] = currentMove.pawn;
+            boardCopy[currentMove.pawnY][currentMove.pawnX] = null;
+            
+            let child = {
+                board: boardCopy,
+                parent: node,
+                children: [],
+                possibleMoves: [],
+                move: currentMove,
+                currentPlayer: (node.currentPlayer == "brown")? "blue": "brown",
+                visits: 0, 
+                wins: 0 
+            }
+            child.possibleMoves = getPossibleMoves(child.board, child.currentPlayer);
+            
+            node.possibleMoves.splice(randomNumber,1);
+            node.children.push(child);
+            return child;
+        }
+
+        function bestChild(node){
+            let value = -Infinity;
+            let best = null;
+            let c = Math.sqrt(2);
+            node.children.forEach(child => {
+                let childValue = (child.wins / child.visits) + (c * Math.sqrt(Math.log(node.visits)/child.visits));
+                if(childValue > value)
+                {
+                    best = child;
+                    value = childValue;
+                }
+            })
+            return best;
+        }
+
+        function defaultPolicy(node){
+            let boardCopy = JSON.parse(JSON.stringify(node.board));
+            let possibleMovesCopy = JSON.parse(JSON.stringify(node.possibleMoves));
+            let currentPlayerCopy = JSON.parse(JSON.stringify(node.currentPlayer));
+            while(node.board[2][2] == null){
+                let randomNumber = Math.floor(Math.random() * ((node.possibleMoves.length-1) - 0 + 1) + 0);
+                let currentMove = node.possibleMoves[randomNumber];
+                node.board[currentMove.y][currentMove.x] = currentMove.pawn;
+                node.board[currentMove.pawnY][currentMove.pawnX] = null;
+                node.currentPlayer = (node.currentPlayer == 'blue')? 'brown': 'blue';
+                node.possibleMoves = getPossibleMoves(node.board, node.currentPlayer);
+            }
+            let reward = (node.board[2][2] == "brownKing")? 1 : -1;
+            node.board = boardCopy;
+            node.possibleMoves = possibleMovesCopy;
+            node.currentPlayer = currentPlayerCopy;
+            return reward;
+        }
+
+        function backup(node, reward){
+            while(node != null){
+                node.visits +=1;
+                node.wins += reward;
+                node = node.parent;
+            }         
+        }
+
+
+
     if(gameMode == 1)//Sterowanie dla 'gracz vs gracz'
     {
         //Funkcja dotyczaca podnoszenia pawna
@@ -1145,6 +1275,15 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
     
                     }, 1000);
                 }
+                else if(botMode == "montecarlotreesearch")
+                {
+                    setTimeout(function(){
+            
+                        bestMoveMonteCarloTreeSearch();
+                        checkTurn();
+    
+                    }, 1000);
+                }
             }
         }
     }
@@ -1212,6 +1351,16 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
                         checkTurn2();
     
                     }, 10);
+                }
+                else if(botMode == "montecarlotreesearch")
+                {
+                    setTimeout(function(){
+                        
+                        getBoardState();
+                        bestMoveMonteCarloTreeSearch();
+                        checkTurn2();
+    
+                    }, 100);
                 }  
             }
         }
