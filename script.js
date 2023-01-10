@@ -981,7 +981,7 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
         //Algorytm Monte-Carlo Tree-Search
         function bestMoveMonteCarloTreeSearch(){
             let moveMCTS = monteCarloTreeSearch(board);
-            
+            drawGraph(moveMCTS[2]);
             moveTile(`${moveMCTS[1].y+1}${moveMCTS[1].x+1}`, `${moveMCTS[1].pawnY+1}${moveMCTS[1].pawnX+1}`, moveMCTS[1].pawn, true);
         }
 
@@ -1017,8 +1017,13 @@ for(var i = 1; i < 6; i++) //Rysowanie pawnow i nadanie wartosci, malowanie na b
                     bestChild = child;
                 }
             })
-            let winingProbability = `${bestChild.wins}/${bestChild.visits}`;
-            return [winingProbability, bestChild.move];
+            
+            let childrenGraph = []
+            root.children.forEach((child)=>{
+            childrenGraph.push({name: `${(child.wins<0)? 0 : child.wins}/${child.visits}`});
+            })
+            let graph = {name: `${bestChild.wins}/${bestChild.visits}`, children: childrenGraph};
+            return [graph.name, bestChild.move, graph];
         }
 
         function treePolicy(node){
